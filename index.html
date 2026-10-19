@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logística Chip & iGreen Store</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+<script>
+  /* aplica o tema salvo antes de desenhar a página (evita "piscar") */
+  (function(){
+    var t = null;
+    try{ t = localStorage.getItem("tema"); }catch(e){}
+    if(t !== "dark" && t !== "light"){
+      t = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ===================== LOGIN ===================== -->
+  <div id="loginScreen" class="login-wrap">
+    <button type="button" class="icon-btn login-theme" data-theme-toggle title="Alternar tema">☾</button>
+    <div class="login-card">
+      <div class="login-mark"></div>
+      <h1 class="login-title">Painel de Chamados</h1>
+      <p class="login-sub">Logística de Chip · iGreen Store</p>
+      <div class="card card-pad">
+        <form id="loginForm">
+          <div class="field">
+            <label for="loginEmail">E-mail</label>
+            <input type="email" id="loginEmail" required placeholder="voce@igreenenergy.com.br">
+          </div>
+          <div class="field">
+            <label for="loginSenha">Senha</label>
+            <input type="password" id="loginSenha" required placeholder="••••••••" minlength="6">
+          </div>
+          <div class="error-msg" id="loginError"></div>
+          <button type="submit" class="btn btn-primary" style="width:100%" id="loginSubmit">Entrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== APP ===================== -->
+  <div id="mainScreen" class="hidden">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div class="brand-text">Painel de Chamados<small>Logística de Chip · iGreen Store</small></div>
+      </div>
+      <div class="top-actions">
+        <button type="button" class="icon-btn" data-theme-toggle title="Alternar tema">☾</button>
+        <button type="button" class="icon-btn" id="btnNotify" title="Ver chamados em aberto">
+          🔔<span class="badge hidden" id="notifBadge">0</span>
+        </button>
+        <div class="user-chip">
+          <div class="av" id="userAv">?</div>
+          <span id="userLabel"></span>
+        </div>
+        <button type="button" class="icon-btn" id="btnLogout" title="Sair">⎋</button>
+      </div>
+    </div>
+    <div class="notif-panel hidden" id="notifPanel">
+      <div class="notif-panel-title">Chamados em aberto</div>
+      <div id="notifList"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="novo">Abrir chamado</button>
+      <button class="tab" data-tab="chamados"><span id="tabChamadosLabel">Chamados</span><span class="badge hidden" id="tabBadge" style="position:static;margin-left:6px;"></span></button>
+    </div>
+
+    <main>
+      <!-- ---- TAB: NOVO CHAMADO ---- -->
+      <section id="tabNovo">
+        <div class="card card-pad">
+          <h2 class="section-title">Abrir novo chamado</h2>
+          <p class="section-sub">Escolha a área e preencha os dados da solicitação.</p>
+          <form id="ticketForm">
+            <div class="field">
+              <label>Área do chamado</label>
+              <div class="cat-picker" role="radiogroup" aria-label="Área do chamado">
+                <label class="cat-option" data-cat="chip">
+                  <input type="radio" name="categoria" value="chip">
+                  <span class="cat-box">
+                    <span><span class="cat-name">Chip</span><span class="cat-resp" style="display:block">Responsável: Maria Julia</span></span>
+                  </span>
+                </label>
+                <label class="cat-option" data-cat="store">
+                  <input type="radio" name="categoria" value="store">
+                  <span class="cat-box">
+                    <span><span class="cat-name">iGreen Store</span><span class="cat-resp" style="display:block">Responsável: Flavia Cunha</span></span>
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="fId">ID do licenciado</label>
+              <input type="text" id="fId" required placeholder="Ex: 10432">
+            </div>
+            <div class="field">
+              <label for="fNome">Nome do licenciado</label>
+              <input type="text" id="fNome" required placeholder="Ex: Loja Centro - João Silva">
+            </div>
+            <div class="field">
+              <label for="fDesc">Descrição da solicitação</label>
+              <textarea id="fDesc" required placeholder="Descreva o que o licenciado precisa (envio de chip, pedido, rastreio, troca…)"></textarea>
+            </div>
+            <div class="field">
+              <label for="fFile">Anexo (foto) <span class="label-opt">— opcional</span></label>
+              <div class="file-drop" id="fileDrop">Toque para selecionar uma foto</div>
+              <input type="file" id="fFile" accept="image/*" class="hidden">
+              <div class="preview-wrap hidden" id="previewWrap"></div>
+              <button type="button" class="file-clear hidden" id="fileClear">Remover anexo</button>
+            </div>
+            <div class="error-msg" id="ticketError"></div>
+            <button type="submit" class="btn btn-primary" id="ticketSubmit" style="width:100%">Abrir chamado</button>
+          </form>
+        </div>
+
+        <div style="margin: 26px 0;">
+          <h3 class="section-title" style="font-size:15px;">Seus últimos chamados</h3>
+          <div id="myHistory" class="mini-history"></div>
+        </div>
+      </section>
+
+      <!-- ---- TAB: CHAMADOS ---- -->
+      <section id="tabChamados" class="hidden">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Buscar por ID, licenciado, descrição, área ou quem abriu…">
+        </div>
+        <div class="filters hidden" id="catFilters">
+          <span class="filter-label">Área</span>
+          <button class="filter-chip active" data-cat="todas">Todas <span class="count" id="ccTodas">0</span></button>
+          <button class="filter-chip" data-cat="chip">Chip <span class="count" id="ccChip">0</span></button>
+          <button class="filter-chip" data-cat="store">iGreen Store <span class="count" id="ccStore">0</span></button>
+        </div>
+        <div class="filters" id="filters">
+          <button class="filter-chip active" data-status="todos">Todos <span class="count" id="cAll">0</span></button>
+          <button class="filter-chip" data-status="aberto">Em aberto <span class="count" id="cAberto">0</span></button>
+          <button class="filter-chip" data-status="analise">Em análise <span class="count" id="cAnalise">0</span></button>
+          <button class="filter-chip" data-status="feito">Feito <span class="count" id="cFeito">0</span></button>
+        </div>
+        <div id="ticketList"></div>
+      </section>
+    </main>
+
+    <footer>Agnes Angelim</footer>
+  </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script type="module" src="script.js?v=7"></script>
+</body>
+</html>
